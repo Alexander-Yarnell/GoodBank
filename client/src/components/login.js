@@ -1,37 +1,51 @@
 import React from "react";
 import Card from "./card";
 import UserContext from "./context";
+import bank from "./Bank.jpg";
+import "./css/home.css";
 
 function Login() {
   const [show, setShow] = React.useState(true);
   const [status, setStatus] = React.useState("");
+  const [height, setHeight] = React.useState("20rem");
 
   return (
-    <Card
-      bgcolor="secondary"
-      header="Login"
-      status={status}
-      body={
-        show ? (
-          <LoginForm setShow={setShow} setStatus={setStatus} />
-        ) : (
-          <LoginMsg setShow={setShow} setStatus={setStatus} />
-        )
-      }
-    />
+    <>
+      <div className="filter">
+        <Card
+          height="auto"
+          bgcolor="white"
+          txtcolor="black"
+          header="GoodBank"
+          status={status}
+          body={
+            show ? (
+              <LoginForm setShow={setShow} setStatus={setStatus} />
+            ) : (
+              <LoginMsg setShow={setShow} setStatus={setStatus} />
+            )
+          }
+        />
+      </div>
+      <img src={bank} className="bg" />
+    </>
   );
 }
 
 function LoginMsg(props) {
+  const { handleLogout } = React.useContext(UserContext);
   return (
     <>
       <h5>Success</h5>
       <button
         type="submit"
-        className="btn btn-light"
-        onClick={() => props.setShow(true)}
+        className="btn btn-warning"
+        onClick={() => {
+          props.setShow(true);
+          handleLogout();
+        }}
       >
-        Authenticate again
+        Logout
       </button>
     </>
   );
@@ -41,9 +55,9 @@ function LoginForm(props) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const { handleLogin } = React.useContext(UserContext);
-
+  const url = `/account/login/${email}/${password}`;
   function handle() {
-    fetch(`/account/login/${email}/${password}`)
+    fetch(url)
       .then((response) => response.text())
       .then((text) => {
         try {
@@ -80,9 +94,13 @@ function LoginForm(props) {
         onChange={(e) => setPassword(e.currentTarget.value)}
       />
       <br />
-      <button type="submit" className="btn btn-light" onClick={handle}>
+      <div className="card-buttons">
+      <button type="submit" className="btn btn-warning" onClick={handle}>
         Login
       </button>
+        <a className="btn btn-light" href="#/CreateAccount">Sign Up</a>
+      </div>
+      <br/>
     </>
   );
 }

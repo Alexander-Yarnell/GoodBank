@@ -1,5 +1,7 @@
 import React from "react";
 import Card from "./card";
+import bank from "./Bank.jpg";
+import UserContext from "./context";
 
 //create account function
 function CreateAccount() {
@@ -7,29 +9,40 @@ function CreateAccount() {
   const [status, setStatus] = React.useState("");
 
   return (
-    <Card
-      bgcolor="primary"
-      header="Create Account"
-      status={status}
-      body={
-        show ? (
-          <CreateForm setShow={setShow} />
-        ) : (
-          <CreateMsg setShow={setShow} />
-        )
-      }
-    />
+    <>
+      <div className="filter">
+        <Card
+          height="auto"
+          bgcolor="light"
+          txtcolor="black"
+          header="GoodBank"
+          status={status}
+          body={
+            show ? (
+              <CreateForm setShow={setShow} />
+            ) : (
+              <CreateMsg setShow={setShow} />
+            )
+          }
+        />
+      </div>
+      <img src={bank} className="bg" />
+    </>
   );
 }
 
 function CreateMsg(props) {
+  const { handleLogout } = React.useContext(UserContext);
   return (
     <>
       <h5>Success</h5>
       <button
         type="submit"
-        className="btn btn-light"
-        onClick={() => props.setShow(true)}
+        className="btn btn-warning"
+        onClick={() => {
+          props.setShow(true);
+          handleLogout();
+        }}
       >
         Add another account
       </button>
@@ -41,14 +54,25 @@ function CreateForm(props) {
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const { handleLogin } = React.useContext(UserContext);
 
   function handle() {
     console.log(name, email, password);
     const url = `/account/create/${name}/${email}/${password}`;
     (async () => {
       var res = await fetch(url);
+      fetch(`/account/login/${email}/${password}`)
+        .then((response) => response.text())
+        .then((text) => {
+          try {
+            const data = JSON.parse(text);
+            handleLogin(data.name, data.email, data.balance);
+            props.setShow(false);
+          } catch (err) {
+            console.log("err:", err);
+          }
+        });
     })();
-    props.setShow(false);
   }
 
   return (
@@ -83,9 +107,14 @@ function CreateForm(props) {
         onChange={(e) => setPassword(e.currentTarget.value)}
       />
       <br />
-      <button type="submit" className="btn btn-light" onClick={handle}>
-        Create Account
-      </button>
+      <div className="card-buttons">
+        <a className="btn btn-light" href="#/Login">
+          Login
+        </a>
+        <button type="submit" className="btn btn-warning" onClick={handle}>
+          Sign Up
+        </button>
+      </div>
     </>
   );
 }

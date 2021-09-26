@@ -3,7 +3,6 @@ import ReactDOM from "react-dom";
 import { HashRouter, Route } from "react-router-dom";
 import NavBar from "./components/navbar";
 import UserContext from "./components/context";
-import Home from "./components/home";
 import CreateAccount from "./components/createAccount";
 import Login from "./components/login";
 import Deposit from "./components/deposit";
@@ -36,8 +35,8 @@ function Spa() {
     <HashRouter>
       <UserContext.Provider value={{ name, email, balance, add, handleLogin, handleLogout }}>
         <NavBar />
-        <div className="container" style={{ padding: "20px" }}>
-          <Route path="/" exact component={Home} />
+        <div > 
+          <Route path="/" exact component={Login} />
           <Route path="/createaccount/" component={CreateAccount} />
           <Route path="/login/" component={Login} />
           <Route path="/deposit/" component={Deposit} />
